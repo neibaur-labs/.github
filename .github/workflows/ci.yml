@@ -1,0 +1,65 @@
+# .github/workflows/ci.yml
+#
+# Docs-stack CI. Emits exactly the two status checks org-stack-docs-ruleset requires:
+#   - lint      (markdownlint-cli2)
+#   - security  (gitleaks secret scan)
+#
+# The job-level `name:` values MUST match the required check names in the ruleset
+# verbatim, or the checks sit at "Expected" and the PR can never merge.
+#
+# PINNING: actions and the gitleaks image are shown with version tags for readability.
+# Per our SHA/digest-pinning policy, replace each `@v4` with the action's commit SHA and
+# the gitleaks tag with an image digest (`@sha256:...`) before merging. Tags are used here
+# as placeholders because accurate SHAs/digests are not supplied from memory. The
+# markdownlint-cli2 version (0.22.0) is pinned to the version validated against this repo.
+
+name: ci
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+# Least privilege: read-only by default for all jobs.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "22"
+      - name: Markdown lint
+        # Globs and rule config are read from .markdownlint-cli2.yaml at the repo root.
+        run: npx -y markdownlint-cli2@0.22.0
+
+  security:
+    name: security
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - name: Secret scan (gitleaks)
+        # gitleaks exits non-zero if any secret is detected, which fails this check.
+        # --no-git scans the working tree; drop it (and use fetch-depth: 0 above) to
+        # also scan full git history.
+        run: |
+          docker run --rm -v "${{ github.workspace }}:/repo" \
+            zricethezav/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \
+            detect --source=/repo --no-git --redact
+            
