@@ -1,24 +1,27 @@
 # Security Policy
 
-## Security Model
+This is the organization-wide security policy for `neibaur-labs`. A repository
+may provide its own `SECURITY.md`, which takes precedence.
 
-Never commit credentials, private keys, or other sensitive material. Local
-pre-commit hooks scan staged changes, and CI scans repository history as an
-independent catch layer.
+## Reporting a vulnerability
 
-Treat any pushed real credential as exposed: rotate or revoke it immediately.
-History rewriting is not a substitute for rotation.
+Please report security vulnerabilities privately — not in public issues or pull
+requests. Use GitHub's private vulnerability reporting on the affected
+repository (the "Report a vulnerability" button on the repository's Security
+tab) where it is enabled. If that is unavailable, contact the maintainer
+directly.
 
-## Reporting a Vulnerability
+Include enough detail to reproduce the issue. We aim to acknowledge reports
+promptly and will coordinate disclosure with you.
 
-Use
-[GitHub private vulnerability reporting](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing/privately-reporting-a-security-vulnerability)
-instead of opening a public issue.
+## Handling of secrets
 
-Include:
+- Secrets, credentials, and tokens must never be committed to any repository.
+  Automated secret scanning runs in CI, and a committed secret is treated as
+  compromised: rotate it immediately — scrubbing history is not remediation.
+- Configuration secrets belong in a vault or in CI secrets, never in the
+  working tree.
 
-- A description of the vulnerability and its potential impact.
-- Steps to reproduce or a proof of concept.
-- Any known mitigations.
+## Scope
 
-Responses are handled as quickly as maintainer availability permits.
+This policy covers repositories owned by the `neibaur-labs` organization.

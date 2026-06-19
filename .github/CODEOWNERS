@@ -1,0 +1,13 @@
+# CODEOWNERS — maintainer ownership of protected areas in the org .github repo.
+# Under .github/ so the org `.github/**` push restriction protects this file.
+# Replace the handle with your GitHub user or team.
+# Do NOT enable "Require review from Code Owners" while you are the sole
+# maintainer — GitHub will not count your own review and would block your PRs.
+
+* @neibaur-labs/maintainers
+
+/.github/ @neibaur-labs/maintainers
+/AGENTS.md @neibaur-labs/maintainers
+/CLAUDE.md @neibaur-labs/maintainers
+/CONTRIBUTING.md @neibaur-labs/maintainers
+/SECURITY.md @neibaur-labs/maintainers
