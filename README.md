@@ -1,2 +1,22 @@
-Now: org Settings → Rulesets → your branch ruleset → Enforcement: Disabled (or Evaluate). Initialize both repos — for the .github repo, rename your existing branch and push it as main: git branch -m docs/initial-set-up-files main && git push -u origin main; for project-template, push an initial commit with the README. Set default branch = main in each repo's settings. Re-enable the ruleset. Total exposure: two minutes, deliberate, logged if you want to be fastidious.
-Standing: if you'll create repos more than occasionally, investigate custom repository properties as the ruleset target (apply the ruleset only to repos with, say, governed = true; SETUP.md gains a step: "set the property after initialization"). That gives you born-free, opted-in-after-init semantics without ever weakening the bypass list. Availability varies by plan — check whether your org's ruleset targeting offers "by property"; if not, the disable-window ritual is an acceptable cost at your repo-creation frequency.
+# neibaur-labs/.github
+
+Organization-wide defaults for the `neibaur-labs` GitHub organization.
+
+This **public** repository supplies default community-health files — such as
+`CONTRIBUTING.md` and `SECURITY.md` — that GitHub applies to any repository in
+the organization that does not provide its own copy. A repository's own file
+always takes precedence; these are fallbacks only, and they do not appear in
+the file tree or history of the repositories they apply to.
+
+## What lives here
+
+- `CONTRIBUTING.md`, `SECURITY.md` — org-wide community-health defaults (root).
+- `.github/` — this repo's own CI, CODEOWNERS, and any issue/PR templates.
+
+## Governance
+
+This repository is classified `stack:docs` and is gated like any other active
+repository: pull requests with passing `lint` and `security` checks,
+squash-merged into a protected `main`. Because it is **public** — required for
+community-health defaults to cascade — it must never contain secrets or
+non-public information.
