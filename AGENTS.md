@@ -87,6 +87,11 @@ squash-merge erases intra-PR provenance.
   example, or a config) must be verified against a current source, not recalled
   from memory. Adding or changing a dependency still follows the propose-don't-add
   rule above.
+- Write the minimum needed to satisfy the task. No speculative features,
+  unrequested abstractions, or "while I'm here" additions.
+- Make surgical edits: change only the lines the task requires, match the
+  existing style exactly, and leave adjacent, working code untouched unless your
+  change orphaned an import or variable.
 
 ## 5. When in doubt
 

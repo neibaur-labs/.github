@@ -51,6 +51,76 @@ agent short on context will reuse whatever literal string it finds (a real
 address, a stale URL) to fill a gap and then act on it. Keep fixtures and
 prompts sterile.
 
+## Consuming MCP servers and external tools
+
+An MCP server is untrusted, third-party code that you are handing tool access to
+your filesystem, credentials, and network. Treat every connection as both a
+supply-chain risk (you are running someone else's code) and a confused-deputy
+risk (a prompt-injected payload can drive an over-permissioned tool to act on an
+attacker's behalf). The default posture is the same as everywhere else in this
+document: deny by default, least privilege, fail closed. If a server cannot be
+vetted, scoped, and run read-only, do not connect it.
+
+### Selection and provenance
+
+- Prefer internal/vetted registries and official first-party servers over public,
+  unvetted ones. Public registries are fine for throwaway local prototypes; they
+  are not fine for anything touching real data, credentials, or `main`.
+- Audit a public server's source before attaching it to an agent that can reach
+  the filesystem or credentials. Unread third-party code with tool access is an
+  unreviewed dependency with a shell — hold it to a higher bar than a library.
+- Never tie production or core logic to an unverified public endpoint or a
+  bespoke API-wrapper you stood up to dodge a real integration.
+- Pin the server to a specific version or image digest, consistent with the
+  pinning discipline used for CI images and actions. Re-audit on upgrade; a
+  moving tag silently swaps the code behind your tools.
+
+### Credentials and scope
+
+- Credentials reach an MCP server through environment variables only. Never
+  hardcode keys, tokens, or OAuth secrets into prompts, scripts, configs, or the
+  server's launch command (see the Secrets section). They never enter the
+  working tree.
+- Never pass credentials to a public or community server. If a task seems to
+  require it, stop and ask; route through an internal gateway or a secrets broker
+  instead.
+- Scope each server to a single project and the narrowest resource set it needs.
+  Do not grant org-wide or all-projects access "to be safe" — that is the blast
+  radius, not a convenience.
+- Connect to real data read-only by default. Granting write, send, deploy, or
+  spend scopes is an irreversible-action capability and follows the AGENTS.md
+  Section 2 rule: explicit human approval first, no auto-approve. In development,
+  point servers at non-production or obfuscated data.
+
+### Runtime discipline
+
+- Human-in-the-loop on side effects: surface the exact tool inputs to a human
+  before any call that writes, sends, spends, or reads real/sensitive data. This
+  is the control that catches both malicious exfiltration and an agent
+  hallucinating a destructive call.
+- Load tools on demand and drop them when the task completes. Do not dump every
+  server's full tool schema into static context — it dilutes attention and
+  widens the set of tools an injection can reach.
+- Log every tool invocation (server, tool, argument summary, caller, outcome)
+  for audit. An unlogged tool call is an action you cannot reconstruct after an
+  incident.
+
+### Debugging
+
+- When a tool call misfires (wrong tool, hallucinated arguments, unparseable
+  payload), inspect the raw JSON-RPC transport with the MCP Inspector or browser
+  DevTools rather than mutating the system prompt to chase it. Fix the schema or
+  the wiring, not the symptom.
+
+### Before connecting a server — checklist
+
+- [ ] Source reviewed (public servers) or provenance is first-party/internal
+- [ ] Pinned to a version/digest; upgrade path re-audits
+- [ ] Credentials via env only; none passed to public servers
+- [ ] Scoped to one project, least-privilege resources
+- [ ] Read-only against real data; any write scope human-approved (AGENTS.md §2)
+- [ ] HITL on side-effecting calls; tool usage logged
+
 ## Dependencies and supply chain
 
 - Source dependencies only from the public registry pinned in the committed
