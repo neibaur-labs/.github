@@ -66,9 +66,10 @@ jobs:
         # p/default is a curated registry pack; --error fails on findings,
         # --metrics=off keeps it from phoning home. Add a committed .semgrep.yml
         # or extra --config packs (p/owasp-top-ten, p/typescript) per project.
+        # Image pinned to v1.166.0.
         run: >
           docker run --rm -v "$PWD:/src" -w /src
-          semgrep/semgrep:latest@sha256:c180f0c93a17b420c0af5006214a29d3c747c5459c732b740191adf657dd0068
+          semgrep/semgrep:1.166.0@sha256:c180f0c93a17b420c0af5006214a29d3c747c5459c732b740191adf657dd0068
           semgrep scan --config p/default --error --metrics=off --quiet
 
       - name: Forbidden pattern check
