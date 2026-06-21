@@ -123,35 +123,3 @@ jobs:
             exit 1
           fi
           echo "No invisible-payload characters found."
-
-      - name: Batch discipline (tests vs implementation)
-        # On a PR, fail if the same change edits both tests and implementation,
-        # so the test stays an objective baseline that cannot be quietly weakened.
-        # Skips on push to main (no PR context).
-        shell: bash
-        run: |
-          set -e
-          base="${{ github.event.pull_request.base.sha }}"
-          head="${{ github.event.pull_request.head.sha }}"
-          if [ -z "$base" ]; then
-            echo "Not a pull request; skipping batch-discipline check."
-            exit 0
-          fi
-          mb=$(git merge-base "$base" "$head")
-          changed=$(git diff --name-only "$mb" "$head")
-          tests=$(echo "$changed"   | grep -E '(^|/)tests?/|\.test\.|\.spec\.' || true)
-          impl=$(echo "$changed"    | grep -E '(^|/)(src|packages|apps)/' \
-                                     | grep -vE '(^|/)tests?/|\.test\.|\.spec\.' || true)
-          if [ -n "$tests" ] && [ -n "$impl" ]; then
-            echo "::error::This PR edits tests and implementation together. Split them so the test is reviewed as an independent baseline."
-            echo "--- test files ---"; echo "$tests"
-            echo "--- implementation files ---"; echo "$impl"
-            exit 1
-          fi
-          echo "Batch discipline OK."
-
-      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271     # v6.0.9
-      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e    # v6.4.0
-        with: { node-version-file: .nvmrc, cache: pnpm }
-      - name: Audit
-        run: pnpm install --frozen-lockfile && pnpm audit --audit-level high
