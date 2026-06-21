@@ -36,7 +36,7 @@ This Code of Conduct applies in all Neibaur Labs project spaces, including repos
 
 Instances of unacceptable behavior may be reported to:
 
-hello@100dash.com
+[hello@100dash.com](mailto:hello@100dash.com)
 
 Reports will be reviewed promptly and handled as fairly and confidentially as possible. People responsible for enforcement must respect the privacy and safety of anyone who reports an incident.
 
@@ -55,4 +55,4 @@ Enforcement decisions should be proportionate, consistent, and focused on protec
 ## Attribution
 
 This Code of Conduct is adapted from the Contributor Covenant, version 2.1:
-https://www.contributor-covenant.org/version/2/1/code_of_conduct/
+[Contributor Covenant v2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct/)
