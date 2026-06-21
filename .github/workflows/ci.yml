@@ -7,11 +7,9 @@
 # The job-level `name:` values MUST match the required check names in the ruleset
 # verbatim, or the checks sit at "Expected" and the PR can never merge.
 #
-# PINNING: actions and the gitleaks image are shown with version tags for readability.
-# Per our SHA/digest-pinning policy, replace each `@v4` with the action's commit SHA and
-# the gitleaks tag with an image digest (`@sha256:...`) before merging. Tags are used here
-# as placeholders because accurate SHAs/digests are not supplied from memory. The
-# markdownlint-cli2 version (0.22.0) is pinned to the version validated against this repo.
+# PINNING POLICY: actions are pinned by commit SHA and the gitleaks image by digest.
+# The SHAs below are real commits for the versions in the trailing comments; when you
+# bump a version, replace the SHA with the new tag's commit SHA (not a moving tag).
 
 name: ci
 
@@ -37,9 +35,9 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0       # v7.0.0
       - name: Set up Node
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e     # v6.4.0
         with:
           node-version: "22"
       - name: Markdown lint
@@ -62,4 +60,66 @@ jobs:
           docker run --rm -v "${{ github.workspace }}:/repo" \
             ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \
             detect --source=/repo --no-git --redact
-            
+
+      - name: SAST (semgrep)
+        # p/default is a curated registry pack; --error fails on findings,
+        # --metrics=off keeps it from phoning home. Add a committed .semgrep.yml
+        # or extra --config packs (p/owasp-top-ten, p/typescript) per project.
+        run: >
+          docker run --rm -v "$PWD:/src" -w /src
+          semgrep/semgrep:latest@sha256:c180f0c93a17b420c0af5006214a29d3c747c5459c732b740191adf657dd0068
+          semgrep scan --config p/default --error --metrics=off --quiet
+
+      - name: Forbidden pattern check
+        shell: bash
+        run: |
+          set +e   # GitHub runs bash with -e by default; we handle grep's exit codes ourselves
+          pattern='eval\(|new Function|child_process|dangerouslySetInnerHTML'
+          dirs=()
+          for d in apps packages src; do
+            [ -d "$d" ] && dirs+=("$d")
+          done
+          if [ "${#dirs[@]}" -eq 0 ]; then
+            echo "No source directories present to scan."
+            exit 0
+          fi
+          grep -rnE "$pattern" \
+            --include='*.ts' --include='*.tsx' --include='*.js' --include='*.jsx' \
+            "${dirs[@]}"
+          status=$?
+          if [ "$status" -eq 0 ]; then
+            echo "::error::Forbidden pattern found"; exit 1
+          elif [ "$status" -gt 1 ]; then
+            echo "::error::Forbidden-pattern scan errored (grep exit $status)"; exit 1
+          fi
+          echo "No forbidden patterns found."
+
+      - name: Invisible-payload scan (zero-width / bidi)
+        # Rejects the invisible-payload and Trojan-Source vectors: zero-width
+        # space/joiners (U+200B-200D), word joiner (U+2060), BOM/ZWNBSP (U+FEFF),
+        # bidi embeddings/overrides (U+202A-202E), and isolates (U+2066-2069).
+        # Matches the raw UTF-8 byte sequences under LC_ALL=C so it does not
+        # depend on the runner's locale (a code-point class needs a UTF-8 locale
+        # that grep -P will not always honor). Legitimate accents/CJK pass.
+        shell: bash
+        run: |
+          set +e
+          dirs=()
+          for d in apps packages src; do
+            [ -d "$d" ] && dirs+=("$d")
+          done
+          if [ "${#dirs[@]}" -eq 0 ]; then
+            echo "No source directories present to scan."
+            exit 0
+          fi
+          pat='\xe2\x80[\x8b-\x8d\xaa-\xae]|\xe2\x81[\xa0\xa6-\xa9]|\xef\xbb\xbf'
+          hits=$(LC_ALL=C grep -rlnP "$pat" \
+            --include='*.ts' --include='*.tsx' --include='*.js' --include='*.jsx' \
+            --include='*.json' --include='*.md' --include='*.yml' --include='*.yaml' \
+            "${dirs[@]}")
+          if [ -n "$hits" ]; then
+            echo "::error::Invisible Unicode (zero-width/bidi) detected in:"
+            echo "$hits"
+            exit 1
+          fi
+          echo "No invisible-payload characters found."
