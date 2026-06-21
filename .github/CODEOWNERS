@@ -11,3 +11,6 @@
 /CLAUDE.md @neibaur-labs/maintainers
 /CONTRIBUTING.md @neibaur-labs/maintainers
 /SECURITY.md @neibaur-labs/maintainers
+/.claude/  @neibaur-labs/maintainers
+/.codex/   @neibaur-labs/maintainers
+/.agent/   @neibaur-labs/maintainers
