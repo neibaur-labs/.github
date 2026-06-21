@@ -24,8 +24,20 @@ Effectively everything here is human territory. In particular, never modify:
 
 - `/.github/**` (CI, CODEOWNERS, issue and PR templates) — also admin-gated by
   the org push ruleset
-- `AGENTS.md`, `CLAUDE.md`, `LICENSE`, repository settings
+- `AGENTS.md`, `CLAUDE.md`, `LICENSE`, repository settings, branch protection,
+  org rulesets and custom properties
+- `.claude/skills/**` and `.agents/skills/**` — skills are code inside the trust
+  boundary; an agent editing its own skill is a privilege-escalation path
+- <!-- CUSTOMIZE: any governance documents this repo owns -->
 - the community-health defaults (`CONTRIBUTING.md`, `SECURITY.md`, and similar)
+
+If a task requires changes there, produce the proposed content in the PR
+description as text and stop. Only the maintainer commits such content, in pull
+requests containing no agent-assisted changes — squash-merge erases intra-PR
+provenance, so a human commit inside an agent-assisted PR is not enough. Agents
+run under scoped identities by default; local sessions under the maintainer's
+own credentials inherit admin bypass rights and are contract-only, reserved for
+low-stakes work with extra review.
 
 Agents may *draft* community-health content in a PR description for the
 maintainer to review and commit; agents never commit it. Human-only content

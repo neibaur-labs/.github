@@ -56,10 +56,10 @@ jobs:
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
       - name: Secret scan (gitleaks)
         # gitleaks exits non-zero if any secret is detected, which fails this check.
-        # --no-git scans the working tree; drop it (and use fetch-depth: 0 above) to
-        # also scan full git history.
+        # --no-git scans the working tree; drop it (and set fetch-depth: 0 above) to
+        # also scan full git history. Standardized on the GHCR image, pinned by digest.
         run: |
           docker run --rm -v "${{ github.workspace }}:/repo" \
-            zricethezav/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \
+            ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \
             detect --source=/repo --no-git --redact
             
