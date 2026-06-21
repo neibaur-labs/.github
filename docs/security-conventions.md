@@ -41,6 +41,15 @@ untrusted. Treat every value that crosses into them as public.
   remediation.
 - The `security` CI check (gitleaks) is a backstop, not permission to be
   careless — assume it will catch you and that catching you means a rotation.
+- Real personal data and live endpoints never get hardcoded into test
+fixtures, specs, skill files, or prompts. Use placeholders or environment
+values instead of literal emails, names, phone numbers, account IDs,
+production URLs, or API endpoints — for example a [[COMMENTER_EMAIL]]
+placeholder resolved at runtime, or an env var, rather than a real address in
+a test. Two reasons: hardcoded PII leaks into version control and logs, and an
+agent short on context will reuse whatever literal string it finds (a real
+address, a stale URL) to fill a gap and then act on it. Keep fixtures and
+prompts sterile.
 
 ## Dependencies and supply chain
 
