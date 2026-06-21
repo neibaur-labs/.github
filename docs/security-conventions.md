@@ -76,3 +76,4 @@ untrusted. Treat every value that crosses into them as public.
   leaked, or a control was skipped. Re-read generated diffs against these rules
   before proposing them, especially anything touching auth, data access, file
   paths, or shell/SQL/HTML construction.
+  
