@@ -1,0 +1,11 @@
+# Docs repos run no application dependencies, but they do run GitHub Actions.
+# Keep those pinned actions current with weekly PRs (still SHA-pinned by Dependabot).
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: chore
