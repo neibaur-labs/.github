@@ -28,9 +28,10 @@ organization-wide defaults; an individual repository may add its own
 - Label AI-assisted pull requests `ai-assisted` and include `Co-authored-by`
   trailers.
 - Governance and protected paths (`.github/**`, `AGENTS.md`, `CLAUDE.md`,
-  `LICENSE`, repository settings) are human-maintained. Agents may propose
-  changes in the PR description; only a maintainer commits them, in a pull
-  request containing no agent-assisted changes.
+  `LICENSE`) are committed by agents only in a session the maintainer started,
+  in their own commits, and listed in the PR description. Unattended runs
+  leave the change in the PR description as a patch. Agents never change
+  repository settings.
 
 ## Security
 
