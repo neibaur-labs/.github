@@ -101,6 +101,17 @@ unclear which kind of run you are in, treat it as unattended.
 - The `lint` and `security` checks must pass. Never weaken them or the
   workflow that produces them.
 - Label agent-assisted PRs `ai-assisted` and include `Co-authored-by` trailers.
+- Review before you push, and stay with the pull request after. In a local
+  session, before opening a pull request and before each push you make to an
+  open one, use the `reviewing-before-pushing` skill. After opening a pull
+  request, or pushing to one you opened or the maintainer asked you to
+  follow, use `following-pull-requests`, and do not report a pull request as
+  ready until the conditions in that skill hold. Both skills come from the
+  `agent-ops` plugin and are not files in this repository. If your session
+  does not have them, say so before you push and in the pull request
+  description; do not skip the review silently. The maintainer's own pushes
+  are not covered, and a push that only merges the base branch needs
+  validation, not a review.
 - The committed lockfile and pinned versions are authoritative — your training
   data is not. Agents fall back to their knowledge cutoff and will confidently
   propose older versions of a library, tool, model, or action than the ones
