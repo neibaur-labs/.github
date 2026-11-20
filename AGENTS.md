@@ -96,8 +96,11 @@ unclear which kind of run you are in, treat it as unattended.
 
 ## 4. Workflow rules
 
-- One concern per PR; Conventional Commits; never push to `main`; never merge,
-  approve, close, or force-push.
+- One concern per PR; Conventional Commits; never push to `main`; never
+  approve, close, or force-push. Never merge, except in a maintainer-started
+  session under the conditions in neibaur-labs/agent-ops GOVERNANCE.md §11
+  (ready, checks green, mergeable, no bypass). Unattended runs never merge. The
+  maintainer merges any pull request that changes those merge rules.
 - The `lint` and `security` checks must pass. Never weaken them or the
   workflow that produces them.
 - Label agent-assisted PRs `ai-assisted` and include `Co-authored-by` trailers.

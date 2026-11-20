@@ -11,4 +11,6 @@ reminders:
 - One concern per PR, <= 400 changed lines.
 - This is a docs-stack repo; the `lint` (markdownlint) and `security` (gitleaks)
   checks must pass before any pull request.
-- Never push to `main`; never merge, approve, close, or force-push.
+- Never push to `main`; never approve, close, or force-push. Never merge, except
+  in a maintainer-started session under neibaur-labs/agent-ops GOVERNANCE.md §11
+  (ready, checks green, mergeable, no bypass). Unattended runs never merge.
