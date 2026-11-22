@@ -122,8 +122,8 @@ unclear which kind of run you are in, treat it as unattended.
   remember, and never "correct" a version that looks newer than you expect — it
   is newer on purpose. Any version you propose (for a new dependency, a doc
   example, or a config) must be verified against a current source, not recalled
-  from memory. Adding or changing a dependency still follows the propose-don't-add
-  rule above.
+  from memory. Adding or changing a dependency still follows the dependency
+  rule in `docs/security-conventions.md` (imported in Section 2).
 - Write the minimum needed to satisfy the task. No speculative features,
   unrequested abstractions, or "while I'm here" additions.
 - Make surgical edits: change only the lines the task requires, match the
