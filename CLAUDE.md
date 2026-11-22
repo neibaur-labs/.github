@@ -6,8 +6,12 @@ The imported AGENTS.md above is the binding contract for this repository. Key
 reminders:
 
 - This repo is **public** — never commit secrets or non-public information.
-- Everything here is human-maintained; propose changes in the PR description,
-  do not commit them.
+- This repo is almost entirely human-maintained governance content. An agent
+  commits a change here only when the maintainer's own prompt in a
+  maintainer-started session directs that change, following AGENTS.md §3
+  (protected paths in their own commits, listed in the PR description). An
+  unattended run proposes the change in the PR description and does not
+  commit it.
 - One concern per PR, <= 400 changed lines.
 - This is a docs-stack repo; the `lint` (markdownlint) and `security` (gitleaks)
   checks must pass before any pull request.
